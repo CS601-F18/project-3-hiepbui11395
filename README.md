@@ -69,23 +69,21 @@ You will support the following four APIs:
 
 #### `GET /reviewsearch`
 
-This request will return a web page containing, at minimum, a text box and button. When the user enters a query in the text box and clicks the button the `POST` method described below will be called.
+The body of this request will look as follows: `query=term` where the value is a URL-encoded string.
+You will return a web page listing all of the review search results.
 
 #### `POST /reviewsearch`
 
-The body of this request will look as follows: `query=term` where the value is a URL-encoded string.
-
-You will return a web page listing all of the review search results.
+This request will return a web page containing, at minimum, a text box and button. When the user enters a query in the text box and clicks the button the `POST` method described below will be called.
 
 #### `GET /find`
 
-This request will return a web page containing, at minimum, a text box and button. When the user enters a message in the text box and clicks the button the `POST` method described below will be called.
+The body of this request will look as follows: `asin=123456789` where the value is a URL-encoded string.
+You will return a web page listing all of the review and qa documents with the provided ASIN.
 
 #### `POST /find`
 
-The body of this request will look as follows: `asin=123456789` where the value is a URL-encoded string.
-
-You will return a web page listing all of the review and qa documents with the provided ASIN.
+This request will return a web page containing, at minimum, a text box and button. When the user enters a message in the text box and clicks the button the `POST` method described below will be called.
 
 ## Part 3 - Chat Application
 
