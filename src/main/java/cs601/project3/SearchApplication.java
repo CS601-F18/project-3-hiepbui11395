@@ -6,7 +6,6 @@ import cs601.project1.InvertedIndex;
 import cs601.project1.ProductList;
 import cs601.project3.handlerImpl.FindHandler;
 import cs601.project3.handlerImpl.ReviewSearchHandler;
-import cs601.project3.handlerImpl.ReviewSearchPOSTHandler;
 import cs601.project3.http.HttpServer;
 
 public class SearchApplication {
@@ -23,14 +22,12 @@ public class SearchApplication {
 					SearchApplication.index, 
 					cs601.project1.Utils.TYPE.REVIEW);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
 		
 		HttpServer server = new HttpServer(port);
 		server.addMapping("/reviewsearch", new ReviewSearchHandler());
-		server.addMapping("/reviewsearch", new ReviewSearchPOSTHandler());
 		server.addMapping("/find", new FindHandler());
 		server.startup();
 	}

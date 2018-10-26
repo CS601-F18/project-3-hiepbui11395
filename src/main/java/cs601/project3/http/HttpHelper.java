@@ -24,125 +24,59 @@ public class HttpHelper implements Runnable {
 
 	@Override
 	public void run() {
-		String fileRequested = null;
-		try(BufferedReader in = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
-				PrintWriter out = new PrintWriter(this.socket.getOutputStream());
+		try(BufferedReader br = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
+				PrintWriter pw = new PrintWriter(this.socket.getOutputStream());
 				BufferedOutputStream bos = new BufferedOutputStream(this.socket.getOutputStream())
-
 				) {
-			int contentLength = 0;
-			//Get the first line of request from client
-			if(!in.ready()) {
+
+			//Get request
+			if(!br.ready()) {
 				return;
 			}
-			String firstLine = in.readLine();
-			System.out.println(firstLine);
-			String input;
-			while((input = in.readLine())!=null && !input.trim().isEmpty()) {
-				if (input.startsWith("Content-Length:")) {
-					String cl = input.substring("Content-Length:".length()).trim();
-					contentLength = Integer.parseInt(cl);
-				}
-				System.out.println(input);
-			}
-			//Parse request with string tokenizer
-			StringTokenizer parse = new StringTokenizer(firstLine);
-			//Get HTTP method from client
-			String method = parse.nextToken().toUpperCase();
-			//Get file requested
-			fileRequested = parse.nextToken().toLowerCase();
+			HttpRequest request = new HttpRequest();
+			this.handleRequestHeader(br, request);
 
 			//Only support GET and POST
-			if(method.equals("GET")) {
-				this.getMethod(fileRequested, out, bos);
-			} else if(method.equals("POST")) {
-				char[] buf = new char[contentLength];
-				in.read(buf);
-				String params = new String(buf, 0, contentLength);
-				this.postMethod(fileRequested, params, out, bos);
+			if(!HttpServer.mapping.containsKey(request.getPath())) {
+				//TODO: path not found
 			} else {
-				this.notFoundMethod(method, out, bos);
+				if(!request.getMethod().equals(HttpMethods.POST) 
+						&& !request.getMethod().equals(HttpMethods.GET)) {
+
+				}
+				//Handle request body if handle POST
+				if(request.getMethod().equals(HttpMethods.POST)) {
+					this.handleRequestBody(br, request);
+				} else {
+					//TODO: method ... not support
+				}
+				HttpServer.mapping.get(request.getPath()).handle(request, pw, bos);
 			}
+			this.socket.close();
 		} catch (IOException e) {
 			e.printStackTrace();
+		} 
+	}
+	
+	private void handleRequestHeader(BufferedReader br, HttpRequest request) throws IOException {
+		String firstLine = br.readLine();
+		StringTokenizer parse = new StringTokenizer(firstLine);
+		request.setMethod(parse.nextToken());
+		request.setPath(parse.nextToken());
+		request.setProtocol(parse.nextToken());
+
+		System.out.println(firstLine);
+		String input;
+		while((input = br.readLine())!=null && !input.trim().isEmpty()) {
+			request.addHeader(input);
 		}
 	}
 
-	private void notFoundMethod(String method, PrintWriter out, BufferedOutputStream bos) {
-		if(HttpServer.verbose) {
-			System.out.println("501 Not Implemented :" + method);
-		}
-
-		//Return not supported to the client
-		File file = new File(HttpServer.WEB_ROOT, HttpServer.METHOD_NOT_SUPPORTED);
-		int fileLength = (int) file.length();
-		String contentMimeType = "text/html";
-		//Read content to return to client
-		byte[] fileData = null;
-		try {
-			fileData = FileHandler.readFileData(file, fileLength);
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
-
-		//Send header with data to client
-		out.println("HTTP/1.1 501 Not Implemented");
-		out.println("Server: Java HTTP Server 1.0");
-		out.println("Date: " + new Date());
-		out.println("Content-type: " + contentMimeType);
-		out.println("Content-length: " + fileLength);
-		out.println();
-		out.flush();
-		//data
-		try {
-			bos.write(fileData, 0, fileLength);
-			bos.flush();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	private void handleRequestBody(BufferedReader in, HttpRequest request) throws IOException {
+		int length = Integer.parseInt(request.getHeaders().get("Content-Length"));
+		char[] buf = new char[length];
+		in.read(buf);
+		String body = new String(buf, 0, length);
+		request.setBody(body);
 	}
-
-	private void getMethod(String fileRequested, PrintWriter out, BufferedOutputStream bos) throws IOException {
-
-		//GET method
-		if(fileRequested.equals("/")) {
-			fileRequested += HttpServer.DEFAULT_FILE;
-			File file = new File(HttpServer.WEB_ROOT, fileRequested);
-			int fileLength = (int) file.length();
-			String content = getContentType(fileRequested);
-			byte[] fileData = FileHandler.readFileData(file, fileLength);
-			// send HTTP Headers
-			out.println("HTTP/1.1 200 OK");
-			out.println("Server: Java HTTP Server from SSaurel : 1.0");
-			out.println("Date: " + new Date());
-			out.println("Content-type: " + content);
-			out.println(); // blank line between headers and content, very important !
-			out.flush(); // flush character output stream buffer
-
-			bos.write(fileData, 0, fileLength);
-			bos.flush();
-		} else {
-			if(HttpServer.getMapping.containsKey(fileRequested)) {
-				Handler handler = HttpServer.getMapping.get(fileRequested);
-				handler.handle(fileRequested, out, bos);
-			}
-		}
-	}
-
-	private void postMethod(String fileRequested, String params, PrintWriter out, BufferedOutputStream bos) throws UnknownHostException {
-		if(HttpServer.getMapping.containsKey(fileRequested)) {
-			Handler handler = HttpServer.postMapping.get(fileRequested);
-			handler.handle(params, out, bos);
-		}
-	}
-
-	private String getContentType(String fileRequested) {
-		if(fileRequested.endsWith(".htm") || fileRequested.endsWith(".html")) {
-			return "text/html";
-		} else {
-			return "image/png";
-		}
-	}
-
-
 }
