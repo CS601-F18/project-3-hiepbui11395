@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import cs601.project1.Product;
-import cs601.project3.SearchApplication;
+import cs601.project3.applications.SearchApplication;
 import cs601.project3.handler.Handler;
 import cs601.project3.http.HttpMethods;
 import cs601.project3.http.HttpRequest;
@@ -29,7 +29,8 @@ public class ReviewSearchHandler implements Handler {
 			this.doPost(request.getBody(), pw);
 			break;
 		default:
-			//TODO: implement method not found/ not available
+			MethodNotFoundHandler methodNotFound = MethodNotFoundHandler.getInstance();
+			methodNotFound.handle(request, pw, bos);
 			break;
 		}
 	}
@@ -58,13 +59,12 @@ public class ReviewSearchHandler implements Handler {
 
 	private void doPost(String requestBody, PrintWriter pw) {
 		
-		//Create response body
+		//Get request body
 		String value = "";
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		try {
 			HttpServer.parseQuery(requestBody, parameters);
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		if(parameters.containsKey("query") && parameters.get("query")!=null) {

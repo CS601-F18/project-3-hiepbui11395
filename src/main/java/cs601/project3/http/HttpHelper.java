@@ -2,17 +2,14 @@ package cs601.project3.http;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.net.UnknownHostException;
-import java.util.Date;
 import java.util.StringTokenizer;
 
-import cs601.project3.handler.Handler;
-import cs601.project3.utils.FileHandler;
+import cs601.project3.handlerImpl.PathNotFoundHandler;
+
 
 public class HttpHelper implements Runnable {
 
@@ -38,17 +35,17 @@ public class HttpHelper implements Runnable {
 
 			//Only support GET and POST
 			if(!HttpServer.mapping.containsKey(request.getPath())) {
-				//TODO: path not found
+				PathNotFoundHandler pathNotFound = PathNotFoundHandler.getInstance();
+				pathNotFound.handle(request, pw, bos);
 			} else {
-				if(!request.getMethod().equals(HttpMethods.POST) 
-						&& !request.getMethod().equals(HttpMethods.GET)) {
-
-				}
+//				if(!request.getMethod().equals(HttpMethods.POST) 
+//						&& !request.getMethod().equals(HttpMethods.GET)) {
+//					MethodNotFoundHandler methodNotFound = MethodNotFoundHandler.getInstance();
+//					methodNotFound.handle(request, pw, bos);
+//				}
 				//Handle request body if handle POST
 				if(request.getMethod().equals(HttpMethods.POST)) {
 					this.handleRequestBody(br, request);
-				} else {
-					//TODO: method ... not support
 				}
 				HttpServer.mapping.get(request.getPath()).handle(request, pw, bos);
 			}

@@ -1,4 +1,4 @@
-package cs601.project3;
+package cs601.project3.applications;
 
 import java.io.IOException;
 
@@ -14,7 +14,7 @@ public class SearchApplication {
 	public static ProductList products = new ProductList();
 	
 	public static void main(String[] args) {
-		int port = 1024;
+		int port = 8080;
 		
 		try {
 			cs601.project1.Utils.addToIndex("reviews_Cell_Phones_and_Accessories_5.json", 
