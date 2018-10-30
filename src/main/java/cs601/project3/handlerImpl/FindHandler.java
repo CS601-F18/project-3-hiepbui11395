@@ -1,7 +1,5 @@
 package cs601.project3.handlerImpl;
 
-import java.io.BufferedOutputStream;
-import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,37 +8,39 @@ import java.util.Map;
 import cs601.project1.Product;
 import cs601.project3.applications.SearchApplication;
 import cs601.project3.handler.Handler;
+import cs601.project3.http.HttpConstantHeader;
 import cs601.project3.http.HttpMethods;
 import cs601.project3.http.HttpRequest;
-import cs601.project3.http.HttpServer;
+import cs601.project3.http.HttpResponse;
+import cs601.project3.utils.HttpUtils;
 
 public class FindHandler implements Handler {
 	private String keyName = "asin";
-	private String header = "HTTP/1.0 200 OK\n" + "\r\n";
 
 	@Override
-	public void handle(HttpRequest request, PrintWriter pw, BufferedOutputStream bos) {
+	public void handle(HttpRequest request, HttpResponse response) {
 		switch(request.getMethod()) {
 		case HttpMethods.GET:
-			this.doGet(pw);
+			this.doGet(request, response);
 			break;
 
 		case HttpMethods.POST:
-			this.doPost(request.getBody(), pw);
+			this.doPost(request, response);
 			break;
 		default:
 			MethodNotFoundHandler methodNotFound = MethodNotFoundHandler.getInstance();
-			methodNotFound.handle(request, pw, bos);
+			methodNotFound.handle(request, response);
 			break;
 		}
 	}
 
-	private void doGet(PrintWriter pw) {
+	private void doGet(HttpRequest request, HttpResponse response) {
 		//Send header to client
-		pw.write(this.header);
+		response.getPw().write(HttpConstantHeader.OK_V0);
+		response.getPw().write(System.lineSeparator());
 		
 		//Send body to client
-		pw.write("<!DOCTYPE html>\n" + 
+		response.getPw().write("<!DOCTYPE html>\n" + 
 				"<html>\n" + 
 				"<head>\n" + 
 				"<meta charset=\"UTF-8\">\n" + 
@@ -54,16 +54,16 @@ public class FindHandler implements Handler {
 				"</form>\n" + 
 				"</body>\n" + 
 				"</html>");
-		pw.close();
+		response.getPw().close();
 	}
 
-	private void doPost(String requestBody, PrintWriter pw) {
+	private void doPost(HttpRequest request, HttpResponse response) {
 		
 		//Get request body
 		String value = "";
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		try {
-			HttpServer.parseQuery(requestBody, parameters);
+			HttpUtils.parseQuery(request.getBody(), parameters);
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
@@ -86,11 +86,12 @@ public class FindHandler implements Handler {
 		body.append("</body></html>");
 
 		//Send header to client
-		pw.write(this.header);
+		response.getPw().write(HttpConstantHeader.OK_V0);
+		response.getPw().write(System.lineSeparator());
 
 		//Send body to client
-		pw.write(body.toString());
-		pw.close();
+		response.getPw().write(body.toString());
+		response.getPw().close();
 		System.out.println("\n --- Server --- : Finished\n");
 	}
 

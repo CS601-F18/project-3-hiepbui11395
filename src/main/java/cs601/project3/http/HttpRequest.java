@@ -7,6 +7,7 @@ public class HttpRequest {
 	private String path;
 	private String protocol;
 	private String body;
+	private String header;
 	private HashMap<String, String> headers = new HashMap<String, String>();
 	
 	public HttpRequest() {
@@ -50,6 +51,14 @@ public class HttpRequest {
 
 	public void setHeaders(HashMap<String, String> headers) {
 		this.headers = headers;
+	}
+
+	public String getHeader() {
+		return header;
+	}
+
+	public void setHeader(String header) {
+		this.header = header;
 	}
 
 	public String getBody() {

@@ -1,56 +1,59 @@
 package cs601.project3.handlerImpl;
 
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.net.ssl.HttpsURLConnection;
 
 import cs601.project3.handler.Handler;
+import cs601.project3.http.HttpConstantHeader;
 import cs601.project3.http.HttpMethods;
 import cs601.project3.http.HttpRequest;
-import cs601.project3.http.HttpServer;
+import cs601.project3.http.HttpResponse;
+import cs601.project3.utils.ConfigurationManager;
+import cs601.project3.utils.HttpUtils;
 
 public class ChatHandler implements Handler {
 
 	private String keyName = "message";
-	private String header = "HTTP/1.0 200 OK\n" + "\r\n";
 	private String postSuccess = "Message had been post to slack!";
 	private String postFail = "Error occur, try again!";
-	private String apiUrl = "https://slack.com/api/chat.postMessage";
-	private String token = "xoxb-378520430422-466222641045-prs118PZ7KdIheVzFvf77m2w";
-	private String channel = "hiepbui";
+	private String apiUrl = ConfigurationManager.getXmlConfiguration("ChatApplication", "Api");
+	private String token = ConfigurationManager.getXmlConfiguration("ChatApplication", "Token");
+	private String channel = ConfigurationManager.getXmlConfiguration("ChatApplication", "Channel");
 
 	@Override
-	public void handle(HttpRequest request, PrintWriter pw, BufferedOutputStream bos) {
+	public void handle(HttpRequest request, HttpResponse response) {
 		switch(request.getMethod()) {
 		case HttpMethods.GET:
-			this.doGet(request, pw);
+			this.doGet(request, response);
 			break;
 
 		case HttpMethods.POST:
-			this.doPost(request, pw);
+			this.doPost(request, response);
 			break;
 		default:
-			//TODO: implement method not found/ not available
+			MethodNotFoundHandler methodNotFound = MethodNotFoundHandler.getInstance();
+			methodNotFound.handle(request, response);
 			break;
 		}
 	}
 
-	private void doGet(HttpRequest request, PrintWriter pw) {
+	private void doGet(HttpRequest request, HttpResponse response) {
 		//Send header to client
-		pw.write(this.header);
+		response.getPw().write(HttpConstantHeader.OK_V0);
+		response.getPw().write(System.lineSeparator());
 
 		//Send body to client
-		pw.write("<!DOCTYPE html>\n" + 
+		response.getPw().write("<!DOCTYPE html>\n" + 
 				"<html>\n" + 
 				"<head>\n" + 
 				"<meta charset=\"UTF-8\">\n" + 
@@ -58,38 +61,45 @@ public class ChatHandler implements Handler {
 				"</head>\n" + 
 				"<body>\n" + 
 				"<h1>Chat Application</h1>\n");
-		if(request.getBody()!=null && !request.getBody().isEmpty()) {
-			pw.write("<h5>" + request.getBody() + "</h5>");
+		if(response.getMessage()!=null && !response.getMessage().isEmpty()) {
+			response.getPw().write("<h5>" + response.getMessage() + "</h5>");
 		}
-		pw.write("<form method=\"POST\">\n" + 
+		response.getPw().write("<form method=\"POST\">\n" + 
 				"Keyword:<input type=\"text\" name=\"" + keyName + "\">\n" + 
 				"<button type=\"submit\">Submit</button>\n" + 
 				"</form>\n" + 
 				"</body>\n" + 
 				"</html>");
-		pw.close();
+		response.getPw().close();
 	}
 
-	private void doPost(HttpRequest request, PrintWriter pw) {
+	private void doPost(HttpRequest request, HttpResponse response) {
 		//Get request body
 		String value = "";
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		try {
-			HttpServer.parseQuery(request.getBody(), parameters);
+			HttpUtils.parseQuery(request.getBody(), parameters);
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
 		if(parameters.containsKey(keyName) && parameters.get(keyName)!=null) {
-			value = parameters.get(keyName).toString().toLowerCase();
+			value = parameters.get(keyName).toString();
+		}
+		try {
+			value = URLEncoder.encode(value,"UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		//create URL object
 		int responseCode = this.sendRequestToSlack(this.apiUrl, this.token, this.channel, value);
 		if(responseCode == 200) {
-			request.setBody(this.postSuccess);
+			response.setMessage(this.postSuccess);
 		} else {
-			request.setBody(this.postFail);
+			response.setMessage(this.postFail);
 		}
-		this.doGet(request, pw);
+		response.setStatusCode(responseCode);
+		this.doGet(request, response);
 		
 		System.out.println("\n --- Server --- : Finished\n");
 	}

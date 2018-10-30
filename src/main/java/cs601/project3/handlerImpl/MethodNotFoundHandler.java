@@ -1,13 +1,11 @@
 package cs601.project3.handlerImpl;
 
-import java.io.BufferedOutputStream;
-import java.io.PrintWriter;
-
 import cs601.project3.handler.Handler;
+import cs601.project3.http.HttpConstantHeader;
 import cs601.project3.http.HttpRequest;
+import cs601.project3.http.HttpResponse;
 
 public class MethodNotFoundHandler implements Handler {
-	private String header = "HTTP/1.0 405 Method Not Allowed\n" + "\r\n";
 	private static MethodNotFoundHandler methodNotFound;
 
 	private MethodNotFoundHandler(){}
@@ -20,11 +18,12 @@ public class MethodNotFoundHandler implements Handler {
 	}
 
 	@Override
-	public void handle(HttpRequest request, PrintWriter pw, BufferedOutputStream bos) {
+	public void handle(HttpRequest request, HttpResponse response) {
 		//Send header to client
-		pw.write(this.header);
+		response.getPw().write(HttpConstantHeader.METHODNOTALLOWED_V0);
+		response.getPw().write(System.lineSeparator());
 		//Send body to client
-		pw.write("<!DOCTYPE html>\n" + 
+		response.getPw().write("<!DOCTYPE html>\n" + 
 				"<html>\n" + 
 				"<head>\n" + 
 				"<meta charset=\"UTF-8\">\n" + 
@@ -34,6 +33,6 @@ public class MethodNotFoundHandler implements Handler {
 				"<h1>Method not allowed</h1>\n" +
 				"</body>\n" + 
 				"</html>");
-		pw.close();
+		response.getPw().close();
 	}
 }
