@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import cs601.project1.Product;
+import cs601.project1.Review;
 import cs601.project3.applications.SearchApplication;
 import cs601.project3.handler.Handler;
 import cs601.project3.http.HttpConstantHeader;
@@ -37,7 +38,7 @@ public class ReviewSearchHandler implements Handler {
 		//Send header to client
 		response.getPw().write(HttpConstantHeader.OK_V0);
 		response.getPw().write(System.lineSeparator());
-		
+
 		//Send body to client
 		response.getPw().write("<!DOCTYPE html>\n" + 
 				"<html>\n" + 
@@ -57,7 +58,7 @@ public class ReviewSearchHandler implements Handler {
 	}
 
 	private void doPost(HttpRequest request, HttpResponse response) {
-		
+
 		//Get request body
 		String value = "";
 		Map<String, Object> parameters = new HashMap<String, Object>();
@@ -73,17 +74,31 @@ public class ReviewSearchHandler implements Handler {
 		ArrayList<Product> products = cs601.project1.Utils.searchByWordApi(value,
 				SearchApplication.index, 
 				SearchApplication.products);
-		
-		StringBuilder body = new StringBuilder("<!DOCTYPE html>\n" + 
-				"<html>\n" + 
-				"<head>\n" + 
-				"<meta charset=\"UTF-8\">\n" + 
-				"<title>Review Search Result</title>\n" + 
-				"</head>\n" + 
-				"<body>\n" +
-				"<h1>Result for: " + value + "</h1>");
-		products.forEach(product -> body.append("<h5>" + product.toString() + "\n</h5>"));
-		body.append("</body></html>");
+
+		StringBuilder body = new StringBuilder("<!DOCTYPE html>" + 
+				"<html>" + 
+				"<head>" + 
+				"<style>" + 
+				"table, th, td {" + 
+				"    border: 1px solid black;" + 
+				"}" + 
+				"</style>" +
+				"<meta charset=\"UTF-8\">" + 
+				"<title>Review Search Result</title>" + 
+				"</head>" + 
+				"<body>" +
+				"<h1>Result for: " + value + "</h1>"+
+				"<table>" +
+				"<tr>" +
+				"<th>Asin</th><th>Review</th><th>Score</th>" +
+				"<tr>");
+		products.forEach(product -> body.append("<tr>" + 
+				"<th>"+ product.getAsin()+"</th>"+
+				"<th>"+ ((Review)product).getReviewText()+"</th>"+
+				"<th>"+ ((Review)product).getOverall()+"</th>"+
+				"</tr>"));
+		body.append("</table>" + 
+				"</body></html>");
 
 		//Send header to client
 		response.getPw().write(HttpConstantHeader.OK_V0);

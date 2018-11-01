@@ -10,12 +10,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import cs601.project3.http.HttpRequest;
 
 public class HttpUtils {
 	public static boolean handleRequestHeader(InputStream in, HttpRequest request) {
 		String line = HttpUtils.oneLine(in);
-		System.out.println(line);
+		
+		Logger logger = LogManager.getLogger();
+		logger.info("Request: " + line);
+		
 		if(line==null) {
 			return false;
 		}
@@ -29,8 +35,10 @@ public class HttpUtils {
 		request.setProtocol(parse.nextToken());
 
 		while((line = HttpUtils.oneLine(in))!=null && !line.trim().isEmpty()) {
+			logger.info(line);
 			request.addHeader(line);
 		}
+		logger.info(System.lineSeparator());
 		return true;
 	}
 

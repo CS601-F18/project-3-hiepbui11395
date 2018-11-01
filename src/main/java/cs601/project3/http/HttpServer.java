@@ -8,6 +8,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import cs601.project3.handler.Handler;
 
 //Each client connection will work with one different httpServer
@@ -16,7 +19,8 @@ public class HttpServer {
 
 	ExecutorService helpers;
 
-	static final boolean verbose = true;
+	static final boolean isTest = true;
+	static volatile boolean running = true;
 
 	//Client connection via socket class
 	private int port;
@@ -28,13 +32,14 @@ public class HttpServer {
 	}
 
 	public void startup() {
+		Logger logger = LogManager.getLogger();
 		try(ServerSocket serverSocket = new ServerSocket(this.port)){
-			System.out.println("Server started.\nListening for connections on port : " + this.port + " ...\n");
-			while(true) {
+			logger.info("Server started.\nListening for connections on port : " + this.port + " ...\n");
+			while(running) {
 				//listen until user request
 				HttpHelper helper = new HttpHelper(serverSocket.accept());
-				if(verbose) {
-					System.out.println("\n\nConnection opened. (" + new Date() + ")");
+				if(isTest) {
+					logger.info("\n\nConnection opened. (" + new Date() + ")");
 				}
 
 				//Create thread to manage client connection
@@ -46,6 +51,7 @@ public class HttpServer {
 	}
 	
 	public void shutdown() {
+		//TODO:
 		helpers.shutdown();
 		try {
 			helpers.awaitTermination(5, TimeUnit.MINUTES);

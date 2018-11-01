@@ -50,6 +50,8 @@ public class ChatHandler implements Handler {
 	private void doGet(HttpRequest request, HttpResponse response) {
 		//Send header to client
 		response.getPw().write(HttpConstantHeader.OK_V0);
+		//TODO: handle connection: close, content-lenght: ...
+		
 		response.getPw().write(System.lineSeparator());
 
 		//Send body to client

@@ -11,6 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.junit.Test;
+import org.junit.runner.JUnitCore;
 
 import cs601.project3.http.HttpRequest;
 import cs601.project3.utils.HttpUtils;
