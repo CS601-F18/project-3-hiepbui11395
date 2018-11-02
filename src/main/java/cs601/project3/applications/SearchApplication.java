@@ -2,16 +2,18 @@ package cs601.project3.applications;
 
 import java.io.IOException;
 
-import cs601.project1.InvertedIndex;
-import cs601.project1.ProductList;
 import cs601.project3.handlerImpl.FindHandler;
 import cs601.project3.handlerImpl.ReviewSearchHandler;
 import cs601.project3.http.HttpServer;
+import cs601.project3.invertedIndex.InvertedIndex;
+import cs601.project3.invertedIndex.ProductList;
+import cs601.project3.invertedIndex.Utils;
 import cs601.project3.utils.ConfigurationManager;
 
 public class SearchApplication {
 
-	public static InvertedIndex index = new InvertedIndex();
+	public static InvertedIndex reviewIndex = ReviewInvertedIndex.getInstance();
+	public static InvertedIndex qaIndex = QaInvertedIndex.getInstance();
 	public static ProductList products = new ProductList();
 	
 	public static void main(String[] args) {
@@ -20,11 +22,16 @@ public class SearchApplication {
 				ConfigurationManager.getXmlConfiguration("SearchApplication", "Port"));
 		
 		try {
-			cs601.project1.Utils.addToIndex(
-					ConfigurationManager.getXmlConfiguration("SearchApplication", "File"), 
+			Utils.addToIndex(
+					ConfigurationManager.getXmlConfiguration("SearchApplication", "ReviewFile"), 
 					SearchApplication.products, 
-					SearchApplication.index, 
-					cs601.project1.Utils.TYPE.REVIEW);
+					SearchApplication.reviewIndex, 
+					Utils.TYPE.REVIEW);
+			Utils.addToIndex(
+					ConfigurationManager.getXmlConfiguration("SearchApplication", "QaFile"), 
+					SearchApplication.products, 
+					SearchApplication.qaIndex, 
+					Utils.TYPE.QA);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

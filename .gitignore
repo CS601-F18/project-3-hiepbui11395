@@ -100,3 +100,5 @@ hs_err_pid*
 # End of https://www.gitignore.io/api/java,eclipse
 /reviews_Cell_Phones_and_Accessories_5 copy.json
 /reviews_Cell_Phones_and_Accessories_5.json
+/qa_Cell_Phones_and_Accessories copy.json
+/qa_Cell_Phones_and_Accessories.json

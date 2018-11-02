@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Settings>
 	<SearchApplication>
-		<File>reviews_Cell_Phones_and_Accessories_5.json</File>
+		<ReviewFile>reviews_Cell_Phones_and_Accessories_5.json</ReviewFile>
+		<QaFile>qa_Cell_Phones_and_Accessories.json</QaFile>
 		<Port>8080</Port>
 	</SearchApplication>
 	<ChatApplication>

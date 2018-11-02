@@ -15,7 +15,7 @@ import javax.net.ssl.HttpsURLConnection;
 
 import cs601.project3.handler.Handler;
 import cs601.project3.http.HttpConstantHeader;
-import cs601.project3.http.HttpMethods;
+import cs601.project3.http.HttpConstant;
 import cs601.project3.http.HttpRequest;
 import cs601.project3.http.HttpResponse;
 import cs601.project3.utils.ConfigurationManager;
@@ -33,11 +33,11 @@ public class ChatHandler implements Handler {
 	@Override
 	public void handle(HttpRequest request, HttpResponse response) {
 		switch(request.getMethod()) {
-		case HttpMethods.GET:
+		case HttpConstant.GET:
 			this.doGet(request, response);
 			break;
 
-		case HttpMethods.POST:
+		case HttpConstant.POST:
 			this.doPost(request, response);
 			break;
 		default:
@@ -48,14 +48,7 @@ public class ChatHandler implements Handler {
 	}
 
 	private void doGet(HttpRequest request, HttpResponse response) {
-		//Send header to client
-		response.getPw().write(HttpConstantHeader.OK_V0);
-		//TODO: handle connection: close, content-lenght: ...
-		
-		response.getPw().write(System.lineSeparator());
-
-		//Send body to client
-		response.getPw().write("<!DOCTYPE html>\n" + 
+		StringBuilder body = new StringBuilder("<!DOCTYPE html>\n" + 
 				"<html>\n" + 
 				"<head>\n" + 
 				"<meta charset=\"UTF-8\">\n" + 
@@ -64,14 +57,23 @@ public class ChatHandler implements Handler {
 				"<body>\n" + 
 				"<h1>Chat Application</h1>\n");
 		if(response.getMessage()!=null && !response.getMessage().isEmpty()) {
-			response.getPw().write("<h5>" + response.getMessage() + "</h5>");
+			body.append("<h5>" + response.getMessage() + "</h5>");
 		}
-		response.getPw().write("<form method=\"POST\">\n" + 
-				"Keyword:<input type=\"text\" name=\"" + keyName + "\">\n" + 
+		body.append("<form method=\"POST\">\n" + 
+				"Keyword:<input required type=\"text\" name=\"" + keyName + "\">\n" + 
 				"<button type=\"submit\">Submit</button>\n" + 
 				"</form>\n" + 
 				"</body>\n" + 
 				"</html>");
+		
+		//Send header to client
+		response.getPw().write(HttpConstantHeader.OK_V0);
+		response.getPw().write(HttpConstant.CONNECTIONCLOSE);
+		response.getPw().write("Content-Length: " + body.length() + "\n");
+		response.getPw().write(System.lineSeparator());
+
+		//Send body to client
+		response.getPw().write(body.toString());
 		response.getPw().close();
 	}
 

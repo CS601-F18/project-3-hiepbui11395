@@ -44,7 +44,7 @@ public class HttpHelper implements Runnable {
 				pathNotFound.handle(request, response);
 			} else {
 				//Handle request body if handle POST
-				if(request.getMethod().equals(HttpMethods.POST)) {
+				if(request.getMethod().equals(HttpConstant.POST)) {
 					HttpUtils.handleRequestBody(in, request);
 				}
 				HttpServer.mapping.get(request.getPath()).handle(request, response);
