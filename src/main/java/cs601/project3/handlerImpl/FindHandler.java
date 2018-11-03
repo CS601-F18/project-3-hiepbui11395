@@ -45,10 +45,10 @@ public class FindHandler implements Handler {
 				"<html>\n" + 
 				"<head>\n" + 
 				"<meta charset=\"UTF-8\">\n" + 
-				"<title>Review Search</title>\n" + 
+				"<title>Find product</title>\n" + 
 				"</head>\n" + 
 				"<body>\n" + 
-				"<h1>Review search</h1>\n" + 
+				"<h1>Find product</h1>\n" + 
 				"<form method=\"POST\">\n" + 
 				"Keyword:<input required type=\"text\" name=\"" + keyName + "\">\n" + 
 				"<button type=\"submit\">Submit</button>\n" + 
@@ -99,7 +99,7 @@ public class FindHandler implements Handler {
 				"}" + 
 				"</style>" +
 				"<meta charset=\"UTF-8\">" + 
-				"<title>Review Search Result</title>" + 
+				"<title>Product Result</title>" + 
 				"</head>" + 
 				"<body>" +
 				"<h1>Result for: " + value + "</h1>"+
