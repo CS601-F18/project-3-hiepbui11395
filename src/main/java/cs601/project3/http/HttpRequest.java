@@ -6,6 +6,7 @@ public class HttpRequest {
 	private String method;
 	private String path;
 	private String protocol;
+	private String headerQuery;
 	private String body;
 	private String header;
 	private HashMap<String, String> headers = new HashMap<String, String>();
@@ -72,7 +73,16 @@ public class HttpRequest {
 	public void addHeader(String header) {
 		String[] keyValue = header.split(":", 2);
 		if(keyValue.length == 2) {
-			headers.put(keyValue[0].trim(), keyValue[1].trim());
+			headers.put(keyValue[0].trim().toLowerCase(), keyValue[1].trim());
 		}
 	}
+
+	public String getHeaderQuery() {
+		return headerQuery;
+	}
+
+	public void setHeaderQuery(String headerQuery) {
+		this.headerQuery = headerQuery;
+	}
+
 }

@@ -22,7 +22,6 @@ public class HttpHelper implements Runnable {
 	public void run() {
 		try(
 				InputStream in = this.socket.getInputStream();
-//				BufferedReader br = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
 				PrintWriter pw = new PrintWriter(this.socket.getOutputStream());
 				BufferedOutputStream bos = new BufferedOutputStream(this.socket.getOutputStream())
 				) {

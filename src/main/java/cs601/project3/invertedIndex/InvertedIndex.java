@@ -26,7 +26,6 @@ public class InvertedIndex {
 		this.indexes = index;
 	}
 
-
 	/**
 	 * Get a textReviewText or Question/Answer split it to words and put in to the InvertedIndex
 	 *
@@ -34,7 +33,7 @@ public class InvertedIndex {
 	 * @param  locationCode work as an Id of each query
 	 * @throws JsonParseException
 	 */
-	public void addWordToIndex(String text, String locationCode) {
+	public synchronized void addWordToIndex(String text, String locationCode) {
 		String[] words = text.split("\\W+");
 		HashMap<String, Integer> countWords = new HashMap<String, Integer>();
 		for(String word : words) {

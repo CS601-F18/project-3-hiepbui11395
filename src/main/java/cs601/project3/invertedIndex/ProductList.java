@@ -1,45 +1,34 @@
 package cs601.project3.invertedIndex;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Map.Entry;
 
 public class ProductList {
+	private static ProductList instance;
 
-	private HashMap<String, ArrayList<Product>> productsByAsin;
-	private HashMap<String, Product> productsByLine;
-	public ProductList(HashMap<String, ArrayList<Product>> productsByAsin, HashMap<String, Product> productsByLine) {
-		super();
-		this.productsByAsin = productsByAsin;
-		this.productsByLine = productsByLine;
-	}
-	public ProductList() {
-		this.productsByAsin = new HashMap<String, ArrayList<Product>>();
-		this.productsByLine = new HashMap<String, Product>();
-	}
-	public HashMap<String, ArrayList<Product>> getProductsByAsin() {
-		return productsByAsin;
-	}
-	public void setProductsByAsin(HashMap<String, ArrayList<Product>> productsByAsin) {
-		this.productsByAsin = productsByAsin;
-	}
-	public HashMap<String, Product> getProductsByLine() {
-		return productsByLine;
-	}
-	public void setProductsByLine(HashMap<String, Product> productsByLine) {
-		this.productsByLine = productsByLine;
-	}
+	private static HashMap<String, ArrayList<Product>> productsByAsin;
+	private static HashMap<String, Product> productsByLine;
+	
+	private ProductList() {}
+	
+	public static synchronized ProductList getInstance(){
+        if(instance == null){
+            instance = new ProductList();
+            productsByAsin = new HashMap<String, ArrayList<Product>>();
+    		productsByLine = new HashMap<String, Product>();
+        }
+        return instance;
+    }
 	
 	public void addProductToDictionary(Product product, String asin, String locationCode) {
-		if(this.getProductsByAsin().containsKey(asin)) {
-			this.getProductsByAsin().get(asin).add(product);
+		if(productsByAsin.containsKey(asin)) {
+			productsByAsin.get(asin).add(product);
 		} else {
 			ArrayList<Product> list = new ArrayList<Product>();
 			list.add(product);
-			this.getProductsByAsin().put(asin, list);
+			productsByAsin.put(asin, list);
 		}
-		this.getProductsByLine().put(locationCode, product);
+		productsByLine.put(locationCode, product);
 	}
 	
 	/**
@@ -67,41 +56,11 @@ public class ProductList {
 		if(indexes.getIndexes().containsKey(word)) {
 			LocationList locationList = indexes.getIndexes().get(word);
 			for(Location location : locationList.getListLocation()){
-				if(this.getProductsByLine().containsKey(location.getLocationCode())) {
-					result.add(this.getProductsByLine().get(location.getLocationCode()));
+				if(productsByLine.containsKey(location.getLocationCode())) {
+					result.add(productsByLine.get(location.getLocationCode()));
 				}
 			}
 		}
-		return result;
-	}
-	
-	/**
-	 * Input a string and find out the Review/Qa that contain that string as a partial word
-	 *
-	 * @param  partialWord  a key to find Review/Qa
-	 * @return ArrayList<Product> a list of product with Review/Qa
-	 */
-	public ArrayList<Product> getLineByPartialWordAndSortByFreq(String partialWord, InvertedIndex indexes){
-		ArrayList<Product> result = new ArrayList<Product>();
-		LocationList locationList = new LocationList(new ArrayList<Location>());
-		for(Entry<String, LocationList> index : indexes.getIndexes().entrySet()) {
-			if(index.getKey().contains(partialWord)) {
-				locationList.addListLocation(index.getValue());
-			}
-		}
-		//ArrayList<Location> locations = listLocation.sortByCount();
-		for(Location location : locationList.getListLocation()) {
-			if(this.getProductsByLine().containsKey(location.getLocationCode())) {
-				result.add(this.getProductsByLine().get(location.getLocationCode()));
-			}
-		}
-		result.sort(new Comparator<Product>() {
-
-			@Override
-			public int compare(Product p1, Product p2) {
-				return p1.getLocationCode().compareTo(p2.getLocationCode());
-			}
-		});
 		return result;
 	}
 }

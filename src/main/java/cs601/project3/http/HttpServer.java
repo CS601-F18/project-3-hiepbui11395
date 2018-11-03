@@ -2,6 +2,7 @@ package cs601.project3.http;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.net.SocketTimeoutException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
@@ -19,8 +20,7 @@ public class HttpServer {
 
 	ExecutorService helpers;
 
-	static final boolean isTest = true;
-	static volatile boolean running = true;
+	private volatile boolean running = true;
 
 	//Client connection via socket class
 	private int port;
@@ -34,30 +34,38 @@ public class HttpServer {
 	public void startup() {
 		Logger logger = LogManager.getLogger();
 		try(ServerSocket serverSocket = new ServerSocket(this.port)){
+			serverSocket.setSoTimeout(1000);
 			logger.info("Server started.\nListening for connections on port : " + this.port + " ...\n");
 			while(running) {
-				//listen until user request
-				HttpHelper helper = new HttpHelper(serverSocket.accept());
-				if(isTest) {
+				try {
+					//listen until user request
+					HttpHelper helper = new HttpHelper(serverSocket.accept());
 					logger.info("\n\nConnection opened. (" + new Date() + ")");
+					//Create thread to manage client connection
+					helpers.execute(helper);
+				}catch(SocketTimeoutException ste) {
+					if(running) {
+						continue;
+					} else {
+						System.out.println("Server closed!");
+					}
 				}
+			}
+			helpers.shutdown();
+			try {
+				helpers.awaitTermination(5, TimeUnit.MINUTES);
 
-				//Create thread to manage client connection
-				helpers.execute(helper);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
 		}catch (IOException ioe) {
 			ioe.printStackTrace();
 		}
 	}
-	
+
 	public void shutdown() {
-		//TODO:
-		helpers.shutdown();
-		try {
-			helpers.awaitTermination(5, TimeUnit.MINUTES);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		running = false;
+		System.out.println("Server closed!");
 	}
 
 	public void addMapping(String mapUrl, Handler handler) {

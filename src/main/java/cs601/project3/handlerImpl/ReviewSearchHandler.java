@@ -1,12 +1,10 @@
 package cs601.project3.handlerImpl;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import cs601.project3.applications.SearchApplication;
+import cs601.project3.applications.ReviewInvertedIndex;
 import cs601.project3.handler.Handler;
 import cs601.project3.http.HttpConstant;
 import cs601.project3.http.HttpConstantHeader;
@@ -14,6 +12,7 @@ import cs601.project3.http.HttpRequest;
 import cs601.project3.http.HttpResponse;
 import cs601.project3.http.Paging;
 import cs601.project3.invertedIndex.Product;
+import cs601.project3.invertedIndex.ProductList;
 import cs601.project3.invertedIndex.Review;
 import cs601.project3.invertedIndex.Utils;
 import cs601.project3.utils.HttpUtils;
@@ -69,12 +68,7 @@ public class ReviewSearchHandler implements Handler {
 		//Get request body
 		String value = "";
 		int page = 0;
-		Map<String, Object> parameters = new HashMap<String, Object>();
-		try {
-			HttpUtils.parseQuery(request.getBody(), parameters);
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
+		Map<String, String> parameters = HttpUtils.parseQuery(request.getBody());
 		if(parameters.containsKey(keyName) && parameters.get(keyName)!=null) {
 			value = parameters.get(keyName).toString();
 		}
@@ -83,12 +77,15 @@ public class ReviewSearchHandler implements Handler {
 		}
 		System.out.println("\n --- Server --- : Search review:\n");
 		ArrayList<Product> products = Utils.searchByWordApi(value,
-				SearchApplication.reviewIndex, 
-				SearchApplication.products);
+				ReviewInvertedIndex.getInstance(), 
+				ProductList.getInstance());
 		int maxPage = products.size()/maxInPage;
 		int firstIndex = page*maxInPage;
-		int lastIndex = (page+1)*maxInPage>=products.size()?products.size()+1:(page+1)*maxInPage;
-		List<Product> result = products.subList(firstIndex, lastIndex);
+		int lastIndex = (page+1)*maxInPage>=products.size()?products.size():(page+1)*maxInPage;
+		List<Product> result = new ArrayList<Product>();
+		if(!products.isEmpty()) {
+			result = products.subList(firstIndex, lastIndex);
+		}
 		StringBuilder body = new StringBuilder("<!DOCTYPE html>" + 
 				"<html>" + 
 				"<head>" + 

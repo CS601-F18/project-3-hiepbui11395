@@ -8,14 +8,13 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.net.ssl.HttpsURLConnection;
 
 import cs601.project3.handler.Handler;
-import cs601.project3.http.HttpConstantHeader;
 import cs601.project3.http.HttpConstant;
+import cs601.project3.http.HttpConstantHeader;
 import cs601.project3.http.HttpRequest;
 import cs601.project3.http.HttpResponse;
 import cs601.project3.utils.ConfigurationManager;
@@ -80,12 +79,7 @@ public class ChatHandler implements Handler {
 	private void doPost(HttpRequest request, HttpResponse response) {
 		//Get request body
 		String value = "";
-		Map<String, Object> parameters = new HashMap<String, Object>();
-		try {
-			HttpUtils.parseQuery(request.getBody(), parameters);
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
+		Map<String, String> parameters = HttpUtils.parseQuery(request.getBody());
 		if(parameters.containsKey(keyName) && parameters.get(keyName)!=null) {
 			value = parameters.get(keyName).toString();
 		}
