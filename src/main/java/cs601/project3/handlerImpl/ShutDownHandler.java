@@ -17,7 +17,6 @@ public class ShutDownHandler implements Handler {
 	@Override
 	public void handle(HttpRequest request, HttpResponse response) {
 		//Send header to client
-		System.out.println("Server closed!");
 		response.getPw().write(HttpConstantHeader.OK_V0);
 		response.getPw().write(HttpConstant.CONNECTIONCLOSE);
 		response.getPw().write(System.lineSeparator());

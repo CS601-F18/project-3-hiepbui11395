@@ -6,12 +6,15 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import cs601.project3.handlerImpl.PathNotFoundHandler;
 import cs601.project3.utils.HttpUtils;
 
 
 public class HttpHelper implements Runnable {
-
+	Logger logger = LogManager.getLogger();
 	private Socket socket;
 
 	public HttpHelper(Socket socket) {
@@ -49,6 +52,7 @@ public class HttpHelper implements Runnable {
 				HttpServer.mapping.get(request.getPath()).handle(request, response);
 			}
 			this.socket.close();
+			logger.info("-----------------End Http Helper------------------\n\n\n");
 		} catch (IOException e) {
 			e.printStackTrace();
 		} 

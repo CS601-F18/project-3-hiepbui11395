@@ -4,13 +4,14 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.util.Map;
 
 import javax.net.ssl.HttpsURLConnection;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import cs601.project3.handler.Handler;
 import cs601.project3.http.HttpConstant;
@@ -21,6 +22,7 @@ import cs601.project3.utils.ConfigurationManager;
 import cs601.project3.utils.HttpUtils;
 
 public class ChatHandler implements Handler {
+	Logger logger = LogManager.getLogger();
 
 	private String keyName = "message";
 	private String postSuccess = "Message had been post to slack!";
@@ -83,12 +85,6 @@ public class ChatHandler implements Handler {
 		if(parameters.containsKey(keyName) && parameters.get(keyName)!=null) {
 			value = parameters.get(keyName).toString();
 		}
-		try {
-			value = URLEncoder.encode(value,"UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		//create URL object
 		int responseCode = this.sendRequestToSlack(this.apiUrl, this.token, this.channel, value);
 		if(responseCode == 200) {
@@ -99,7 +95,7 @@ public class ChatHandler implements Handler {
 		response.setStatusCode(responseCode);
 		this.doGet(request, response);
 		
-		System.out.println("\n --- Server --- : Finished\n");
+		logger.info("\n --- Server --- : Finished\n");
 	}
 
 
@@ -123,9 +119,9 @@ public class ChatHandler implements Handler {
 			wr.close();
 
 			responseCode = connection.getResponseCode();
-			System.out.println("\nSending 'POST' request to URL : " + url);
-			System.out.println("Post parameters : " + urlParameters);
-			System.out.println("Response Code : " + responseCode);
+			logger.info("\nSending 'POST' request to URL : " + url);
+			logger.info("Post parameters : " + urlParameters);
+			logger.info("Response Code : " + responseCode);
 
 			BufferedReader in = new BufferedReader(
 					new InputStreamReader(connection.getInputStream()));

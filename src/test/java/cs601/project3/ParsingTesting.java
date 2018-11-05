@@ -44,14 +44,11 @@ public class ParsingTesting {
 	}
 	
 	@Test
-	public void testRequestHeaderContent() {
+	public void testRequestHeader() {
 		HttpRequest request = new HttpRequest();
 		
 		try {
 			File htmlRequest = new File("src/test/resources/right/postTest.txt");
-			Path htmlRequestBody = new File("src/test/resources/right/postBodyTest.txt").toPath();
-			byte[] body = Files.readAllBytes(htmlRequestBody);
-			String expected = new String(body);
 			InputStream in = new FileInputStream(htmlRequest);
 			HttpUtils.handleRequestHeader(in, request);
 			assertEquals(request.getMethod(), "POST");
@@ -59,8 +56,20 @@ public class ParsingTesting {
 			assertEquals(request.getProtocol(), "HTTP/1.1");
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
+		}
+	}
+	
+	@Test
+	public void testRequestHeaderContent() {
+		HttpRequest request = new HttpRequest();
+		
+		try {
+			File htmlRequest = new File("src/test/resources/right/postTest.txt");
+			InputStream in = new FileInputStream(htmlRequest);
+			HttpUtils.handleRequestHeader(in, request);
+			assertEquals(request.getHeaders().size(), 13);
+			
+		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
 	}

@@ -43,8 +43,11 @@ public class HttpUtils {
 		request.setProtocol(parse.nextToken());
 
 		while((line = HttpUtils.oneLine(in))!=null && !line.trim().isEmpty()) {
-			logger.info(line);
-			request.addHeader(line);
+			logger.info("\t"+line);
+			if(!request.addHeader(line)) {
+				logger.info("\tFalse:"+line);
+				return false;
+			}
 		}
 		logger.info(System.lineSeparator());
 		return true;

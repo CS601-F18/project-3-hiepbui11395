@@ -10,11 +10,11 @@ public class HttpRequest {
 	private String body;
 	private String header;
 	private HashMap<String, String> headers = new HashMap<String, String>();
-	
+
 	public HttpRequest() {
 		super();
 	}
-	
+
 	public HttpRequest(String method, String path, String protocol) {
 		super();
 		this.method = method;
@@ -69,12 +69,19 @@ public class HttpRequest {
 	public void setBody(String body) {
 		this.body = body;
 	}
-	
-	public void addHeader(String header) {
+
+	public boolean addHeader(String header) {
 		String[] keyValue = header.split(":", 2);
 		if(keyValue.length == 2) {
-			headers.put(keyValue[0].trim().toLowerCase(), keyValue[1].trim());
+			if(HttpConstant.HEADERKEY.contains(keyValue[0].trim().toLowerCase())) {
+				headers.put(keyValue[0].trim().toLowerCase(), keyValue[1].trim());
+			} else {
+				return false;
+			}
+		} else {
+			return false;
 		}
+		return true;
 	}
 
 	public String getHeaderQuery() {

@@ -36,6 +36,7 @@ public class HttpServer {
 		try(ServerSocket serverSocket = new ServerSocket(this.port)){
 			serverSocket.setSoTimeout(1000);
 			logger.info("Server started.\nListening for connections on port : " + this.port + " ...\n");
+			System.out.println("Server started.\nListening for connections on port : " + this.port + " ...\n");
 			while(running) {
 				try {
 					//listen until user request
@@ -65,7 +66,6 @@ public class HttpServer {
 
 	public void shutdown() {
 		running = false;
-		System.out.println("Server closed!");
 	}
 
 	public void addMapping(String mapUrl, Handler handler) {

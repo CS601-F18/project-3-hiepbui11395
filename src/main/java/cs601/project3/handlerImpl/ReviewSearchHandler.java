@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import cs601.project3.applications.ReviewInvertedIndex;
 import cs601.project3.handler.Handler;
 import cs601.project3.http.HttpConstant;
@@ -18,6 +21,7 @@ import cs601.project3.invertedIndex.Utils;
 import cs601.project3.utils.HttpUtils;
 
 public class ReviewSearchHandler implements Handler {
+	Logger logger = LogManager.getLogger();
 	private String keyName = "query";
 	private int maxInPage = 10;
 	@Override
@@ -132,7 +136,7 @@ public class ReviewSearchHandler implements Handler {
 		//Send body to client
 		response.getPw().write(body.toString());
 		response.getPw().close();
-		System.out.println("\n --- Server --- : Finished\n");
+		logger.info("\n --- Server --- : Finished\n");
 	}
 
 }
