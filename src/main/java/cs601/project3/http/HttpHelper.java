@@ -9,6 +9,7 @@ import java.net.Socket;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import cs601.project3.handlerImpl.MethodNotFoundHandler;
 import cs601.project3.handlerImpl.PathNotFoundHandler;
 import cs601.project3.utils.HttpUtils;
 
@@ -32,24 +33,32 @@ public class HttpHelper implements Runnable {
 			HttpRequest request = new HttpRequest();
 			boolean validRequest = HttpUtils.handleRequestHeader(in, request);
 			if(!validRequest) {
+				logger.info(HttpConstantHeader.BADREQUEST_V0);
 				pw.write(HttpConstantHeader.BADREQUEST_V0);
 				pw.write(System.lineSeparator());
 				this.socket.close();
-			}
-
-			//Only support GET and POST
-			HttpResponse response = new HttpResponse();
-			response.setPw(pw);
-			response.setBos(bos);
-			if(!HttpServer.mapping.containsKey(request.getPath())) {
-				PathNotFoundHandler pathNotFound = PathNotFoundHandler.getInstance();
-				pathNotFound.handle(request, response);
+				return;
 			} else {
-				//Handle request body if handle POST
-				if(request.getMethod().equals(HttpConstant.POST)) {
-					HttpUtils.handleRequestBody(in, request);
+
+				HttpResponse response = new HttpResponse();
+				response.setPw(pw);
+				response.setBos(bos);
+				//Only support GET and POST
+				if(!request.getMethod().equals("GET") && !request.getMethod().equals("POST")) {
+					MethodNotFoundHandler methodNotFound = MethodNotFoundHandler.getInstance();
+					methodNotFound.handle(request, response);
 				}
-				HttpServer.mapping.get(request.getPath()).handle(request, response);
+				else if(!HttpServer.mapping.containsKey(request.getPath())) {
+					PathNotFoundHandler pathNotFound = PathNotFoundHandler.getInstance();
+					pathNotFound.handle(request, response);
+				} else {
+					//Handle request body if handle POST
+					if(request.getMethod().equals(HttpConstant.POST)) {
+						HttpUtils.handleRequestBody(in, request);
+					}
+					HttpServer.mapping.get(request.getPath()).handle(request, response);
+				}
+
 			}
 			this.socket.close();
 			logger.info("-----------------End Http Helper------------------\n\n\n");

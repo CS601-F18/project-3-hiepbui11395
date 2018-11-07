@@ -71,6 +71,60 @@ public class SystemTestSearchApp {
 			e.printStackTrace();
 		}
 	}
+	
+	/**
+	 * Test post FindHandler with unusedParam
+	 * asin = b004v9htua
+	 */
+	@Test
+	public void testPostFindHandlerUnusedParam() {
+		String method = "";
+		String path = "";
+		String requestBody = null;
+		Path htmlRequestBody = new File("src/test/resources/right/response/findHandler/postFindB001DN5030.html").toPath();
+		byte[] body;
+		try {
+			body = Files.readAllBytes(htmlRequestBody);
+			String expected = new String(body);
+
+			//Get actual result
+			method = "POST";
+			path = "/find";
+			requestBody = "asin=B001DN5030&name=Hiep";
+			String actual = HttpUtils.httpFetcher(host, PORT, method, path, requestBody);
+			assertEquals(expected, actual);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Test post FindHandler without required param
+	 * asin = b004v9htua
+	 */
+	@Test
+	public void testPostFindHandlerWithoutRequiredParam() {
+		String method = "";
+		String path = "";
+		String requestBody = null;
+		Path htmlRequestBody = new File("src/test/resources/right/response/findHandler/getFindError.html").toPath();
+		byte[] body;
+		try {
+			body = Files.readAllBytes(htmlRequestBody);
+			String expected = new String(body);
+
+			//Get actual result
+			method = "POST";
+			path = "/find";
+			requestBody = "asi=B001DN5030&name=Hiep";
+			String actual = HttpUtils.httpFetcher(host, PORT, method, path, requestBody);
+			assertEquals(expected, actual);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	/**
 	 * Test get ReviewSearchHandler
@@ -127,7 +181,7 @@ public class SystemTestSearchApp {
 	 * Test path not found
 	 */
 	@Test
-	public void pathNotFound() {
+	public void testPathNotFound() {
 		String method = "";
 		String path = "";
 		String requestBody = null;
@@ -148,7 +202,7 @@ public class SystemTestSearchApp {
 	 * Test method not allowed
 	 */
 	@Test
-	public void methodNotAllowed() {
+	public void testMethodNotAllowed() {
 		String method = "";
 		String path = "";
 		String requestBody = null;
@@ -157,6 +211,28 @@ public class SystemTestSearchApp {
 		//Get actual result
 		method = "PUT";
 		path = "/find";
+		String response = HttpUtils.httpFetcher(host, PORT, method, path, requestBody);
+		String firstLine = response.split(System.lineSeparator(), 2)[0];
+		StringTokenizer tokenizer = new StringTokenizer(firstLine);
+		String httpVersion = tokenizer.nextToken();
+		String actualStatusCode = tokenizer.nextToken();
+		assertEquals(expected, actualStatusCode);
+	}
+	
+
+	/**
+	 * Test method and path not allowed
+	 */
+	@Test
+	public void testMethodAndPathNotAllowed() {
+		String method = "";
+		String path = "";
+		String requestBody = null;
+		String expected = "405";
+
+		//Get actual result
+		method = "PUT";
+		path = "/findABC";
 		String response = HttpUtils.httpFetcher(host, PORT, method, path, requestBody);
 		String firstLine = response.split(System.lineSeparator(), 2)[0];
 		StringTokenizer tokenizer = new StringTokenizer(firstLine);

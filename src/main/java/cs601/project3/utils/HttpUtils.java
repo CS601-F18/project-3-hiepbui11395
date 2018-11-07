@@ -2,17 +2,28 @@ package cs601.project3.utils;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
 import java.net.Socket;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import javax.net.ssl.HttpsURLConnection;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import cs601.project3.http.HttpRequest;
 
@@ -44,16 +55,14 @@ public class HttpUtils {
 
 		while((line = HttpUtils.oneLine(in))!=null && !line.trim().isEmpty()) {
 			logger.info("\t"+line);
-			if(!request.addHeader(line)) {
-				logger.info("\tFalse:"+line);
-				return false;
-			}
+			request.addHeader(line);
 		}
 		logger.info(System.lineSeparator());
 		return true;
 	}
 
 	public static void handleRequestBody(InputStream in, HttpRequest request) {
+		Logger logger = LogManager.getLogger();
 		int length = Integer.parseInt(request.getHeaders().get("content-length"));
 		byte[] bytes = new byte[length];
 		int read;
@@ -67,6 +76,7 @@ public class HttpUtils {
 		}
 		String body = new String(bytes);
 		request.setBody(body);
+		logger.info("Body: \t" + body);
 	}
 
 	/**
@@ -103,7 +113,11 @@ public class HttpUtils {
 					key = param[0];
 				}
 				if (param.length > 1) {
-					value = param[1];
+					try {
+						value = URLDecoder.decode(param[1],"UTF-8");
+					} catch (UnsupportedEncodingException e) {
+						e.printStackTrace();
+					}
 				}
 				parameters.put(key, value);
 			}
@@ -115,29 +129,21 @@ public class HttpUtils {
 		StringBuffer buf = new StringBuffer();
 
 		try (
-				Socket sock = new Socket(host, PORT); //create a connection to the web server
-				OutputStream out = sock.getOutputStream(); //get the output stream from socket
-				InputStream instream = sock.getInputStream(); //get the input stream from socket
-				//wrap the input stream to make it easier to read from
-				BufferedReader reader = new BufferedReader(new InputStreamReader(instream))
+				Socket sock = new Socket(host, PORT);
+				OutputStream out = sock.getOutputStream();
+				InputStream in = sock.getInputStream();
+				BufferedReader br = new BufferedReader(new InputStreamReader(in))
 				) { 
 			String request = null;
 			//send request
 			request = request(method, host, path, body);
-
-			//			if(method.equals("POST")) {
-			//				request = postRequest(host, path, body);
-			//			}
 			out.write(request.getBytes());
 			out.flush();
 
-			//receive response
-			//note: a better approach would be to first read headers, determine content length
-			//then read the remaining bytes as a byte stream
-			String line = reader.readLine();
+			String line = br.readLine();
 			while(line != null) {				
-				buf.append(line + "\n"); //append the newline stripped by readline
-				line = reader.readLine();
+				buf.append(line + "\n");
+				line = br.readLine();
 			}
 			sock.close();
 		} catch (IOException e) {
@@ -154,5 +160,48 @@ public class HttpUtils {
 				+ "\r\n"
 				+ (body!=null?body:"");
 		return request;
+	}
+	
+	public static JsonObject callApi(String apiUrl, String token, String channel, String text) {
+		JsonObject result = null;
+		Logger logger = LogManager.getLogger();
+		URL url;
+		try {
+			url = new URL(apiUrl);
+			//create secure connection 
+			HttpsURLConnection connection = (HttpsURLConnection)url.openConnection();
+			connection.setRequestMethod("POST");
+			String urlParameters = "token=" + token
+					+ "&channel=" + channel
+					+ "&text=" + URLEncoder.encode(text, "UTF-8");
+
+			// Send post request
+			connection.setDoOutput(true);
+			DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
+			wr.writeBytes(urlParameters);
+			wr.flush();
+			wr.close();
+
+			logger.info("\nSending 'POST' request to URL : " + url);
+			logger.info("Post parameters : " + urlParameters);
+			logger.info(System.lineSeparator());
+
+			BufferedReader in = new BufferedReader(
+					new InputStreamReader(connection.getInputStream()));
+			String inputLine;
+
+			StringBuilder response = new StringBuilder();
+			while ((inputLine = in.readLine()) != null) {
+				response.append(inputLine);
+			}
+			result = new JsonParser().parse(response.toString()).getAsJsonObject();
+			in.close();
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return result;
 	}
 }
