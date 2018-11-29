@@ -9,6 +9,11 @@ import cs601.project3.http.HttpConstantHeader;
 import cs601.project3.http.HttpRequest;
 import cs601.project3.http.HttpResponse;
 
+/**
+ * A handler to return 405 Method Not Found page
+ * @author hiepbui
+ *
+ */
 public class MethodNotFoundHandler implements Handler {
 	Logger logger = LogManager.getLogger();
 	private static MethodNotFoundHandler methodNotFound;

@@ -31,6 +31,9 @@ public class HttpServer {
 		this.port = port;
 	}
 
+	/**
+	 * Run a HttpServer and wait for a request
+	 */
 	public void startup() {
 		Logger logger = LogManager.getLogger();
 		try(ServerSocket serverSocket = new ServerSocket(this.port)){
@@ -64,10 +67,18 @@ public class HttpServer {
 		}
 	}
 
+	/**
+	 * Toggle a flag to shut down http server
+	 */
 	public void shutdown() {
 		running = false;
 	}
 
+	/**
+	 * Add a specific path to specific handler
+	 * @param mapUrl
+	 * @param handler
+	 */
 	public void addMapping(String mapUrl, Handler handler) {
 		HttpServer.mapping.put(mapUrl, handler);
 	}

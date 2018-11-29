@@ -1,5 +1,10 @@
 package cs601.project3.invertedIndex;
 
+/**
+ * Contain the location of each product in file
+ * @author hiepbui
+ *
+ */
 public abstract class Product {
 	protected String locationCode;
 	protected String asin;

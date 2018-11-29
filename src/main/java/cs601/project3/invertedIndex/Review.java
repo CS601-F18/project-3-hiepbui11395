@@ -1,5 +1,10 @@
 package cs601.project3.invertedIndex;
 
+/**
+ * Review class contains review's information
+ * @author hiepbui
+ *
+ */
 public class Review extends Product{
 	private String reviewText;
 	private String reviewerID;

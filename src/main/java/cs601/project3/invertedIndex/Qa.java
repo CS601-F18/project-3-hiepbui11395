@@ -1,5 +1,10 @@
 package cs601.project3.invertedIndex;
 
+/**
+ * QA class contain question and answer
+ * @author hiepbui
+ *
+ */
 public class Qa extends Product {
 	private String question;
 	private String answer;

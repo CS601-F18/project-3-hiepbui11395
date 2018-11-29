@@ -2,6 +2,11 @@ package cs601.project3.http;
 
 import java.util.HashMap;
 
+/**
+ * Contain the method, path, protocol, header, body of each request
+ * @author hiepbui
+ *
+ */
 public class HttpRequest {
 	private String method;
 	private String path;

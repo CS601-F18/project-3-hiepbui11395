@@ -13,6 +13,14 @@ import org.xml.sax.SAXException;
 
 public class ConfigurationManager {
 	private static String configurationUrl = "config.xml";
+	
+	
+	/**
+	 * Get configuration value in config.xml file
+	 * @param type
+	 * @param info
+	 * @return String value of the type-info in XML configuration file
+	 */
 	public static String getXmlConfiguration(String type, String info) {
 		Document dom = null;
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();

@@ -43,6 +43,11 @@ public class FindHandler implements Handler {
 		}
 	}
 
+	/**
+	 * Handle a GET method and return a html page to search by asin
+	 * @param request
+	 * @param response
+	 */
 	private void doGet(HttpRequest request, HttpResponse response) {
 		StringBuilder body = new StringBuilder("<!DOCTYPE html>\n" + 
 				"<html>\n" + 
@@ -73,6 +78,11 @@ public class FindHandler implements Handler {
 		response.getPw().close();
 	}
 
+	/**
+	 * Handle a POST method, find in inverted index then render and return html page
+	 * @param request
+	 * @param response
+	 */
 	private void doPost(HttpRequest request, HttpResponse response) {
 
 		//Get request body

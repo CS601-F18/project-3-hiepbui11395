@@ -15,6 +15,12 @@ import cs601.project3.http.HttpResponse;
 import cs601.project3.utils.ConfigurationManager;
 import cs601.project3.utils.HttpUtils;
 
+/**
+ * 
+ * @author hiepbui
+ * Chat Handler class, handle GET and POSTmethod
+ *
+ */
 public class ChatHandler implements Handler {
 	Logger logger = LogManager.getLogger();
 
@@ -41,7 +47,12 @@ public class ChatHandler implements Handler {
 			break;
 		}
 	}
-
+	
+	/**
+	 * Handle a GET method and return a html page to send message
+	 * @param request
+	 * @param response
+	 */
 	private void doGet(HttpRequest request, HttpResponse response) {
 		StringBuilder body = new StringBuilder("<!DOCTYPE html>\n" + 
 				"<html>\n" + 
@@ -73,6 +84,11 @@ public class ChatHandler implements Handler {
 		response.getPw().close();
 	}
 
+	/**
+	 * Handle a POSTmethod and send request api to Slack api
+	 * @param request
+	 * @param response
+	 */
 	private void doPost(HttpRequest request, HttpResponse response) {
 		//Get request body
 		String value = "";

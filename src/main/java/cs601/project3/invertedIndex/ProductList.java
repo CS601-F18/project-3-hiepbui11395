@@ -3,6 +3,11 @@ package cs601.project3.invertedIndex;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * Contain a list of product that already convert into inverted index
+ * @author hiepbui
+ *
+ */
 public class ProductList {
 	private static ProductList instance;
 

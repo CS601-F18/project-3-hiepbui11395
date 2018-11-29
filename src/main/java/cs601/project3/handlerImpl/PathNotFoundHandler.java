@@ -9,6 +9,11 @@ import cs601.project3.http.HttpConstantHeader;
 import cs601.project3.http.HttpRequest;
 import cs601.project3.http.HttpResponse;
 
+/**
+ * A handler to return 404 Not Found page
+ * @author hiepbui
+ *
+ */
 public class PathNotFoundHandler implements Handler {
 	Logger logger = LogManager.getLogger();
 	private static PathNotFoundHandler pathNotFound;

@@ -3,6 +3,11 @@ package cs601.project3.invertedIndex;
 import java.util.ArrayList;
 import java.util.Comparator;
 
+/**
+ * Contain the list of Location class
+ * @author hiepbui
+ *
+ */
 public class LocationList {
 	private ArrayList<Location> listLocation;
 

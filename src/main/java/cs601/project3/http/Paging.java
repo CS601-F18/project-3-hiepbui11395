@@ -1,6 +1,13 @@
 package cs601.project3.http;
 
 public class Paging {
+	/**
+	 * Support paging in table, render script for next/back button
+	 * @param body
+	 * @param page
+	 * @param maxPage
+	 * @return
+	 */
 	public static StringBuilder addScript(StringBuilder body, int page, int maxPage) {
 		body.append("<script>\n"); 
 		if(page>0) {

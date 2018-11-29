@@ -3,6 +3,11 @@ package cs601.project3.http;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Contain generic value of http
+ * @author hiepbui
+ *
+ */
 public class HttpConstant {
 	public static final String GET = "GET";
 	public static final String POST = "POST";

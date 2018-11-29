@@ -10,6 +10,12 @@ import cs601.project3.invertedIndex.ProductList;
 import cs601.project3.invertedIndex.Utils;
 import cs601.project3.utils.ConfigurationManager;
 
+/**
+ * 
+ * @author hiepbui
+ * Main class for review/qa search application
+ *
+ */
 public class SearchApplication {
 
 	

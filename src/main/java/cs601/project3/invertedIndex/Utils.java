@@ -18,6 +18,7 @@ public class Utils {
 	
 	
 	/**
+	 * Read the file and add product to Product List, keyword to inverted index
 	 * @param url file name to read from
 	 * @param invertedIndex the invertedIndex to keep information
 	 * @param type type of product's doc(Review/QA)
@@ -61,6 +62,12 @@ public class Utils {
 		};
 	}
 
+	/**
+	 * Find the product in ProductList base on input asin
+	 * @param asin
+	 * @param products
+	 * @return
+	 */
 	public static ArrayList<Product> findApi(String asin, ProductList  products) {
 		ArrayList<Product> result = products.getProductByAsin(asin);
 		return result;
@@ -68,7 +75,6 @@ public class Utils {
 
 	/**
 	 * execute the command search by word
-	 * 
 	 * @param term the key to find 
 	 * @param Index an InvertedIndex of Review/Qa file
 	 */

@@ -3,6 +3,11 @@ package cs601.project3.http;
 import java.io.BufferedOutputStream;
 import java.io.PrintWriter;
 
+/**
+ * Contain statusCode, message and also PrintWriter, BuffertedOutputStream to send response to client
+ * @author hiepbui
+ *
+ */
 public class HttpResponse {
 	private int statusCode;
 	

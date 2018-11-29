@@ -28,6 +28,12 @@ import com.google.gson.JsonParser;
 import cs601.project3.http.HttpRequest;
 
 public class HttpUtils {
+	/**
+	 * Parse request header and check if the header in the right format or not
+	 * @param in
+	 * @param request
+	 * @return
+	 */
 	public static boolean handleRequestHeader(InputStream in, HttpRequest request) {
 		String line = HttpUtils.oneLine(in);
 
@@ -61,6 +67,11 @@ public class HttpUtils {
 		return true;
 	}
 
+	/**
+	 * Get the request body and put into HttpRequest
+	 * @param in
+	 * @param request
+	 */
 	public static void handleRequestBody(InputStream in, HttpRequest request) {
 		Logger logger = LogManager.getLogger();
 		int length = Integer.parseInt(request.getHeaders().get("content-length"));
@@ -101,6 +112,11 @@ public class HttpUtils {
 		return new String(bout.toByteArray());
 	}
 
+	/**
+	 * Parse a query into a map of key,value
+	 * @param query
+	 * @return Map<String,String> is a list of key-value in a query
+	 */
 	public static Map<String, String> parseQuery(String query){
 		Map<String, String> parameters = new HashMap<String, String>();
 		if (query != null) {
@@ -125,6 +141,15 @@ public class HttpUtils {
 		return parameters;
 	}
 
+	
+	/**
+	 * @param host
+	 * @param PORT
+	 * @param method
+	 * @param path
+	 * @param body
+	 * @return make a request to an url and return the String result
+	 */
 	public static String httpFetcher(String host, int PORT, String method, String path, String body) {
 		StringBuffer buf = new StringBuffer();
 
@@ -151,7 +176,15 @@ public class HttpUtils {
 		}
 		return buf.toString();
 	}
-
+	
+	/**
+	 * Init the request base on method, host, bath and body
+	 * @param method
+	 * @param host
+	 * @param path
+	 * @param body
+	 * @return
+	 */
 	private static String request(String method, String host, String path, String body) {
 		String request = method + " " + path + " HTTP/1.1" + "\n" //GET request
 				+ "Host: " + host + "\n" //Host header required for HTTP/1.1
@@ -162,6 +195,14 @@ public class HttpUtils {
 		return request;
 	}
 	
+	/**
+	 * Make request to Slack api with token, channel, text and return a JsonObject
+	 * @param apiUrl
+	 * @param token
+	 * @param channel
+	 * @param text
+	 * @return
+	 */
 	public static JsonObject callApi(String apiUrl, String token, String channel, String text) {
 		JsonObject result = null;
 		Logger logger = LogManager.getLogger();

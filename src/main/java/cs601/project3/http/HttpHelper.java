@@ -13,7 +13,11 @@ import cs601.project3.handlerImpl.MethodNotFoundHandler;
 import cs601.project3.handlerImpl.PathNotFoundHandler;
 import cs601.project3.utils.HttpUtils;
 
-
+/**
+ * A helper class to support the HttpServer handle a request
+ * @author hiepbui
+ *
+ */
 public class HttpHelper implements Runnable {
 	Logger logger = LogManager.getLogger();
 	private Socket socket;
@@ -22,6 +26,9 @@ public class HttpHelper implements Runnable {
 		this.socket = socket;
 	}
 
+	/**
+	 * Run a http helper after receive a request and parse the request
+	 */
 	@Override
 	public void run() {
 		try(

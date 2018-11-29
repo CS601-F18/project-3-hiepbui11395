@@ -7,6 +7,11 @@ import cs601.project3.http.HttpRequest;
 import cs601.project3.http.HttpResponse;
 import cs601.project3.http.HttpServer;
 
+/**
+ * Shut down the web application
+ * @author hiepbui
+ *
+ */
 public class ShutDownHandler implements Handler {
 	private HttpServer server;
 

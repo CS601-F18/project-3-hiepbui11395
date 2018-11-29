@@ -1,5 +1,10 @@
 package cs601.project3.invertedIndex;
 
+/**
+ * Location of each query in inveted index and frequency
+ * @author hiepbui
+ *
+ */
 public class Location {
 	private String locationCode;
 	private int count;

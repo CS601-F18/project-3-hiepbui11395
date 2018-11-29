@@ -6,6 +6,11 @@ import java.util.Map.Entry;
 
 import com.google.gson.JsonParseException;
 
+/**
+ * The base class of inverted Index
+ * @author hiepbui
+ *
+ */
 public class InvertedIndex {
 	private HashMap<String, LocationList> indexes;
 

@@ -193,7 +193,6 @@ public class SystemTestSearchApp {
 		String response = HttpUtils.httpFetcher(host, PORT, method, path, requestBody);
 		String firstLine = response.split(System.lineSeparator(), 2)[0];
 		StringTokenizer tokenizer = new StringTokenizer(firstLine);
-		String httpVersion = tokenizer.nextToken();
 		String actualStatusCode = tokenizer.nextToken();
 		assertEquals(expected, actualStatusCode);
 	}
@@ -214,7 +213,6 @@ public class SystemTestSearchApp {
 		String response = HttpUtils.httpFetcher(host, PORT, method, path, requestBody);
 		String firstLine = response.split(System.lineSeparator(), 2)[0];
 		StringTokenizer tokenizer = new StringTokenizer(firstLine);
-		String httpVersion = tokenizer.nextToken();
 		String actualStatusCode = tokenizer.nextToken();
 		assertEquals(expected, actualStatusCode);
 	}
@@ -236,7 +234,6 @@ public class SystemTestSearchApp {
 		String response = HttpUtils.httpFetcher(host, PORT, method, path, requestBody);
 		String firstLine = response.split(System.lineSeparator(), 2)[0];
 		StringTokenizer tokenizer = new StringTokenizer(firstLine);
-		String httpVersion = tokenizer.nextToken();
 		String actualStatusCode = tokenizer.nextToken();
 		assertEquals(expected, actualStatusCode);
 	}
