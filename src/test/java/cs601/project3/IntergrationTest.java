@@ -8,6 +8,11 @@ import com.google.gson.JsonObject;
 
 import cs601.project3.utils.HttpUtils;
 
+/**
+ * Integration test between application and slack api
+ * @author hiepbui
+ *
+ */
 public class IntergrationTest {
 	@Test
 	public void testIntegrateSlackApi() {

@@ -13,6 +13,7 @@ import org.junit.Test;
 import cs601.project3.utils.HttpUtils;
 
 /**
+ * System test for search application
  * @author hiepbui
  *
  */
