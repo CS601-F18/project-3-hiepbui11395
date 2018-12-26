@@ -8,7 +8,6 @@
 	<ChatApplication>
 		<Port>9090</Port>
 		<Api>https://slack.com/api/chat.postMessage</Api>
-		<Token>xoxb-378520430422-466222641045-prs118PZ7KdIheVzFvf77m2w</Token>
 		<Channel>hiepbui</Channel>
 	</ChatApplication>
 	
